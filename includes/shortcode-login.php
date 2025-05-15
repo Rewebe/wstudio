@@ -5,20 +5,20 @@ if (!defined('ABSPATH')) exit;
 add_shortcode('kundegalleri_login', function() {
     ob_start();
     ?>
-    <div class="kundegalleri-login-wrapper">
-        <form id="kundegalleri-login-form">
+    <div class="wstudio-login-wrapper">
+        <form id="wstudio-login-form">
             <p>
-                <label for="kunde_email">E-mail:</label><br>
-                <input type="email" name="kunde_email" id="kunde_email" required>
+                <label for="wstudio_email">E-mail:</label><br>
+                <input type="email" name="wstudio_email" id="wstudio_email" required>
             </p>
             <p>
-                <label for="kunde_password">Adgangskode:</label><br>
-                <input type="password" name="kunde_password" id="kunde_password" required>
+                <label for="wstudio_password">Adgangskode:</label><br>
+                <input type="password" name="wstudio_password" id="wstudio_password" required>
             </p>
             <p>
                 <button type="submit" class="button button-primary">Login</button>
             </p>
-            <div id="kundegalleri-login-response" class="kundegalleri-login-error"></div>
+            <div id="wstudio-login-response" class="wstudio-login-error"></div>
         </form>
     </div>
     <?php
@@ -28,21 +28,21 @@ add_shortcode('kundegalleri_login', function() {
 // === ENQUEUE SCRIPTS & STYLES ===
 add_action('wp_enqueue_scripts', function() {
     if (is_singular() && has_shortcode(get_post()->post_content, 'kundegalleri_login')) {
-        wp_enqueue_style('kundegalleri-login-style', plugin_dir_url(__FILE__) . '../assets/css/login.css', [], '1.0');
-        wp_enqueue_script('kundegalleri-login', plugin_dir_url(__FILE__) . '../assets/js/kundegalleri-login.js', ['jquery'], '1.1', true);
-        wp_localize_script('kundegalleri-login', 'kundegalleri_email_vars', [
+        wp_enqueue_style('wstudio-login-style', plugin_dir_url(__FILE__) . '../assets/css/login.css', [], '1.0');
+        wp_enqueue_script('wstudio-login', plugin_dir_url(__FILE__) . '../assets/js/kundegalleri-login.js', ['jquery'], '1.1', true);
+        wp_localize_script('wstudio-login', 'wstudio_login_vars', [
             'ajax_url' => admin_url('admin-ajax.php')
         ]);
     }
 });
 
 // === AJAX LOGIN HANDLER ===
-add_action('wp_ajax_kundegalleri_ajax_login', 'kundegalleri_ajax_login');
-add_action('wp_ajax_nopriv_kundegalleri_ajax_login', 'kundegalleri_ajax_login');
+add_action('wp_ajax_wstudio_ajax_login', 'wstudio_ajax_login');
+add_action('wp_ajax_nopriv_wstudio_ajax_login', 'wstudio_ajax_login');
 
-function kundegalleri_ajax_login() {
-    $email = sanitize_email($_POST['kunde_email'] ?? '');
-    $password = sanitize_text_field($_POST['kunde_password'] ?? '');
+function wstudio_ajax_login() {
+    $email = sanitize_email($_POST['wstudio_email'] ?? '');
+    $password = sanitize_text_field($_POST['wstudio_password'] ?? '');
 
     if (empty($email) || empty($password)) {
         wp_send_json_error('Udfyld både e-mail og adgangskode.');

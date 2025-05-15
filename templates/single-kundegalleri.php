@@ -11,7 +11,7 @@ get_header();
       <?php
       if (have_posts()) :
         while (have_posts()) : the_post();
-          echo do_shortcode('[kundegalleri id="' . get_the_ID() . '"]');
+          echo do_shortcode('[kundegalleri id="' . get_the_ID() . '"]') . do_shortcode('[kundegalleri_download id="' . get_the_ID() . '"]');
         endwhile;
       else :
         echo '<p>Galleriet blev ikke fundet.</p>';
