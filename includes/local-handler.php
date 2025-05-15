@@ -28,8 +28,7 @@ add_action('wstudio_upload_image', function($file, $post_id) {
     error_log("[wstudio] Original flyttet til: $original_dest");
 
     // Gem versioner
-    foreach ($versions as $type => $path) {
-        if ($type === 'thumbs') $type = 'thumb';
+    foreach ($versions['paths'] as $type => $path) {
         $dest = $base_dir . $type . '/' . $filename;
         copy($path, $dest);
         unlink($path);
