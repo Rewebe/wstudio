@@ -20,7 +20,7 @@ add_action('wstudio_upload_image', function($file, $post_id) {
     wp_mkdir_p($base_dir . 'original/');
     wp_mkdir_p($base_dir . 'web/');
     wp_mkdir_p($base_dir . 'webwm/');
-    wp_mkdir_p($base_dir . 'thumbs/');
+    wp_mkdir_p($base_dir . 'thumb/');
 
     // Flyt original
     $original_dest = $base_dir . 'original/' . $filename;
@@ -29,6 +29,7 @@ add_action('wstudio_upload_image', function($file, $post_id) {
 
     // Gem versioner
     foreach ($versions as $type => $path) {
+        if ($type === 'thumbs') $type = 'thumb';
         $dest = $base_dir . $type . '/' . $filename;
         copy($path, $dest);
         unlink($path);
