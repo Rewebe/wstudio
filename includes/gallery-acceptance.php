@@ -6,10 +6,10 @@ if (!defined('ABSPATH')) exit;
 /**
  * AJAX: Godkend billeder (Approve gallery)
  */
-add_action('wp_ajax_wg_approve_gallery', 'wg_approve_gallery_handler');
-add_action('wp_ajax_nopriv_wg_approve_gallery', 'wg_approve_gallery_handler');
+add_action('wp_ajax_wstudio_approve_gallery', 'wstudio_approve_gallery_handler');
+add_action('wp_ajax_nopriv_wstudio_approve_gallery', 'wstudio_approve_gallery_handler');
 
-function wg_approve_gallery_handler() {
+function wstudio_approve_gallery_handler() {
     // Sikkerhedstjek
     if (empty($_POST['gallery_id']) || empty($_POST['security'])) {
         wp_send_json_error('Manglende data.');

@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Weigang Kundegalleri
-Description: Komplet galleri-plugin med AJAX upload, vandmærke, e-mail funktion, loginbeskyttelse, automatisk udløbsstyring, sikre billednavne og .htaccess-beskyttelse.
-Version: 3.2
+Plugin Name: WStudio
+Description: Billedleverings-plugin til kunder – med AJAX-upload, vandmærke, loginbeskyttelse og automatisk udløbsstyring.
+Version: 1.0
 Author: Weigang
 */
 
@@ -25,11 +25,11 @@ require_once plugin_dir_path(__FILE__) . 'includes/send-email.php';
 register_activation_hook(__FILE__, function() {
     // Opret upload-mappe og .htaccess
     $upload_dir = wp_upload_dir();
-    $kundegalleri_dir = trailingslashit($upload_dir['basedir']) . 'kundegalleri';
-    if (!file_exists($kundegalleri_dir)) {
-        wp_mkdir_p($kundegalleri_dir);
+    $wstudio_dir = trailingslashit($upload_dir['basedir']) . 'kundegalleri';
+    if (!file_exists($wstudio_dir)) {
+        wp_mkdir_p($wstudio_dir);
     }
-    $htaccess_file = trailingslashit($kundegalleri_dir) . '.htaccess';
+    $htaccess_file = trailingslashit($wstudio_dir) . '.htaccess';
     if (!file_exists($htaccess_file)) {
         file_put_contents($htaccess_file, "<FilesMatch \"\\.(php|php5|phtml|phar)\$\">\nDeny from all\n</FilesMatch>\n");
     }
@@ -62,16 +62,16 @@ add_action('admin_enqueue_scripts', function($hook) {
     global $post_type, $post;
     if ('kundegalleri' !== $post_type) return;
 
-    wp_enqueue_script('kundegalleri-upload', plugin_dir_url(__FILE__) . 'assets/js/public.js', ['jquery'], '2.3', true);
-    wp_localize_script('kundegalleri-upload', 'kundegalleri_vars', [
+    wp_enqueue_script('wstudio-upload', plugin_dir_url(__FILE__) . 'assets/js/public.js', ['jquery'], '2.3', true);
+    wp_localize_script('wstudio-upload', 'wstudio_vars', [
         'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('kundegalleri_secure_upload'),
+        'nonce' => wp_create_nonce('wstudio_secure_upload'),
         'post_id' => $post->ID ?? 0,
     ]);
 
     if ('post.php' === $hook) {
-        wp_enqueue_script('kundegalleri-email', plugin_dir_url(__FILE__) . 'assets/js/kundegalleri-email.js', ['jquery'], '1.0', true);
-        wp_localize_script('kundegalleri-email', 'kundegalleri_email_vars', [
+        wp_enqueue_script('wstudio-email', plugin_dir_url(__FILE__) . 'assets/js/kundegalleri-email.js', ['jquery'], '1.0', true);
+        wp_localize_script('wstudio-email', 'wstudio_email_vars', [
             'ajax_url' => admin_url('admin-ajax.php'),
         ]);
     }
@@ -86,24 +86,24 @@ add_action('wp_enqueue_scripts', function() {
 
     $css_file = plugin_dir_path(__FILE__) . 'assets/css/gallery.css';
     $version = file_exists($css_file) ? filemtime($css_file) : time();
-    wp_enqueue_style('kundegalleri-gallery', plugin_dir_url(__FILE__) . 'assets/css/gallery.css', [], $version);
-    wp_enqueue_script('kundegalleri-gallery', plugin_dir_url(__FILE__) . 'assets/js/gallery.js', ['jquery', 'lightgallery-js'], '1.3', true);
+    wp_enqueue_style('wstudio-gallery', plugin_dir_url(__FILE__) . 'assets/css/gallery.css', [], $version);
+    wp_enqueue_script('wstudio-gallery', plugin_dir_url(__FILE__) . 'assets/js/gallery.js', ['jquery', 'lightgallery-js'], '1.3', true);
 
     // Disable højreklik
-    wp_add_inline_script('kundegalleri-gallery', 'document.addEventListener("contextmenu",function(e){e.preventDefault();},false);');
+    wp_add_inline_script('wstudio-gallery', 'document.addEventListener("contextmenu",function(e){e.preventDefault();},false);');
 
     // Hvis login shortcode bruges
     if (is_page() && has_shortcode(get_post()->post_content, 'kundegalleri_login')) {
-        wp_enqueue_script('kundegalleri-login-js', plugin_dir_url(__FILE__) . 'assets/js/kundegalleri-login.js', ['jquery'], '1.0', true);
-        wp_localize_script('kundegalleri-login-js', 'kundegalleri_login_vars', [
+        wp_enqueue_script('wstudio-login-js', plugin_dir_url(__FILE__) . 'assets/js/kundegalleri-login.js', ['jquery'], '1.0', true);
+        wp_localize_script('wstudio-login-js', 'wstudio_login_vars', [
             'ajax_url' => admin_url('admin-ajax.php')
         ]);
     }
 });
 
 // AJAX upload billeder
-add_action('wp_ajax_kundegalleri_ajax_upload', function() {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'kundegalleri_secure_upload')) wp_send_json_error('Ugyldig nonce');
+add_action('wp_ajax_wstudio_ajax_upload', function() {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wstudio_secure_upload')) wp_send_json_error('Ugyldig nonce');
     if (!current_user_can('upload_files')) wp_send_json_error('Ingen adgang');
 
     $post_id = intval($_POST['post_id']);
@@ -130,10 +130,10 @@ add_action('wp_ajax_kundegalleri_ajax_upload', function() {
     $original_path = trailingslashit($base_dir) . 'original/' . $filename;
     if (move_uploaded_file($file['tmp_name'], $original_path)) {
         $settings = [
-            'enabled' => empty(get_post_meta($post_id, '_kundegalleri_disable_watermark', true)) && get_option('kundegalleri_watermark_enabled', 'no') === 'yes',
-            'opacity' => get_option('kundegalleri_watermark_opacity', 30),
-            'position' => get_option('kundegalleri_watermark_position', 'center'),
-            'watermark_text' => get_option('kundegalleri_watermark_text', ''),
+            'enabled' => empty(get_post_meta($post_id, '_wstudio_disable_watermark', true)) && get_option('wstudio_watermark_enabled', 'no') === 'yes',
+            'opacity' => get_option('wstudio_watermark_opacity', 30),
+            'position' => get_option('wstudio_watermark_position', 'center'),
+            'watermark_text' => get_option('wstudio_watermark_text', ''),
         ];
 
         $watermarked_path = trailingslashit($base_dir) . 'watermarked/' . $filename;
@@ -166,8 +166,8 @@ add_action('wp_ajax_kundegalleri_ajax_upload', function() {
 });
 
 // AJAX slet billeder
-add_action('wp_ajax_kundegalleri_ajax_delete', function() {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'kundegalleri_secure_upload')) wp_send_json_error('Ugyldig nonce');
+add_action('wp_ajax_wstudio_ajax_delete', function() {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wstudio_secure_upload')) wp_send_json_error('Ugyldig nonce');
     if (!current_user_can('edit_posts')) wp_send_json_error('Ingen adgang');
 
     $post_id = intval($_POST['post_id']);
@@ -188,12 +188,12 @@ add_action('wp_ajax_kundegalleri_ajax_delete', function() {
 
 // Admin menu
 add_action('admin_menu', function() {
-    add_submenu_page('edit.php?post_type=kundegalleri', 'Dagens Bookinger', 'Dagens Bookinger', 'edit_posts', 'kundegalleri-dagens-bookinger', function() {
+    add_submenu_page('edit.php?post_type=kundegalleri', 'Dagens Bookinger', 'Dagens Bookinger', 'edit_posts', 'wstudio-dagens-bookinger', function() {
         include plugin_dir_path(__FILE__) . 'includes/admin-today-bookings.php';
     });
-    add_submenu_page(null, 'Opret Galleri', 'Opret Galleri', 'edit_posts', 'opret-galleri', 'kundegalleri_opret_page_handler');
+    add_submenu_page(null, 'Opret Galleri', 'Opret Galleri', 'edit_posts', 'opret-galleri', 'wstudio_opret_page_handler');
 });
-function kundegalleri_opret_page_handler() {
+function wstudio_opret_page_handler() {
     include plugin_dir_path(__FILE__) . 'includes/opret-galleri.php';
 }
 
@@ -201,8 +201,8 @@ function kundegalleri_opret_page_handler() {
 add_action('save_post_kundegalleri', function($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (!current_user_can('edit_post', $post_id)) return;
-    if (!get_post_meta($post_id, '_kundegalleri_expiration', true)) {
-        update_post_meta($post_id, '_kundegalleri_expiration', date('Y-m-d', strtotime('+15 days')));
+    if (!get_post_meta($post_id, '_wstudio_expiration', true)) {
+        update_post_meta($post_id, '_wstudio_expiration', date('Y-m-d', strtotime('+15 days')));
     }
 });
 
@@ -214,7 +214,7 @@ add_action('init', function() {
         'posts_per_page' => -1,
         'post_status' => 'publish',
         'meta_query' => [[
-            'key' => '_kundegalleri_expiration',
+            'key' => '_wstudio_expiration',
             'value' => $today,
             'compare' => '<=',
             'type' => 'DATE'

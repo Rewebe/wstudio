@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) exit;
 
 /**
- * Admin-metaboxes til kundegalleri
+ * Admin-metaboxes til wstudio
  * - Upload billeder
  * - Vandmærkeindstilling
  * - Kundeinfo
@@ -12,14 +12,14 @@ if (!defined('ABSPATH')) exit;
 
 // --- Upload billeder + vandmærke
 add_action('add_meta_boxes', function() {
-    add_meta_box('kundegalleri_upload', 'Upload billeder til kundemappe', 'wk_gallery_upload_metabox_html', 'kundegalleri');
-    add_meta_box('kundegalleri_watermark_meta_box', 'Vandmærke', 'kundegalleri_watermark_meta_box_callback', 'kundegalleri', 'side');
+    add_meta_box('wstudio_upload', 'Upload billeder til kundemappe', 'wk_gallery_upload_metabox_html', 'kundegalleri');
+    add_meta_box('wstudio_watermark_meta_box', 'Vandmærke', 'wstudio_watermark_meta_box_callback', 'kundegalleri', 'side');
 });
 
 function wk_gallery_upload_metabox_html($post) {
     $upload_url = wp_upload_dir()['baseurl'] . '/kundegalleri/' . $post->ID . '/original/';
     ?>
-    <div class="kundegalleri-upload-wrapper" style="margin-top:20px;">
+    <div class="wstudio-upload-wrapper" style="margin-top:20px;">
         <p>Træk billeder ind herunder eller klik for at vælge filer. Gemmes i:</p>
         <code><?php echo esc_html($upload_url); ?></code>
         <div id="dropzone" style="border:2px dashed #ccc;padding:20px;text-align:center;margin-top:10px;cursor:pointer;">Klik eller træk filer her</div>
@@ -53,12 +53,12 @@ function wk_gallery_upload_metabox_html($post) {
 }
 
 // --- Vandmærke metabox
-function kundegalleri_watermark_meta_box_callback($post) {
-    wp_nonce_field('kundegalleri_save_watermark_meta', 'kundegalleri_watermark_meta_nonce');
-    $value = get_post_meta($post->ID, '_kundegalleri_watermark_setting', true);
+function wstudio_watermark_meta_box_callback($post) {
+    wp_nonce_field('wstudio_save_watermark_meta', 'wstudio_watermark_meta_nonce');
+    $value = get_post_meta($post->ID, '_wstudio_watermark_setting', true);
     ?>
-    <label for="kundegalleri_watermark_setting">Vandmærkeindstilling:</label><br>
-    <select name="kundegalleri_watermark_setting" id="kundegalleri_watermark_setting">
+    <label for="wstudio_watermark_setting">Vandmærkeindstilling:</label><br>
+    <select name="wstudio_watermark_setting" id="wstudio_watermark_setting">
         <option value="default" <?php selected($value, 'default'); ?>>Standard (følger global indstilling)</option>
         <option value="always" <?php selected($value, 'always'); ?>>Altid anvend vandmærke</option>
         <option value="never" <?php selected($value, 'never'); ?>>Aldrig anvend vandmærke</option>
@@ -66,22 +66,22 @@ function kundegalleri_watermark_meta_box_callback($post) {
     <?php
 }
 add_action('save_post', function($post_id) {
-    if (!isset($_POST['kundegalleri_watermark_meta_nonce']) || !wp_verify_nonce($_POST['kundegalleri_watermark_meta_nonce'], 'kundegalleri_save_watermark_meta')) return;
+    if (!isset($_POST['wstudio_watermark_meta_nonce']) || !wp_verify_nonce($_POST['wstudio_watermark_meta_nonce'], 'wstudio_save_watermark_meta')) return;
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (!current_user_can('edit_post', $post_id)) return;
 
     $allowed = ['default', 'always', 'never'];
-    $setting = isset($_POST['kundegalleri_watermark_setting']) && in_array($_POST['kundegalleri_watermark_setting'], $allowed)
-        ? $_POST['kundegalleri_watermark_setting'] : 'default';
-    update_post_meta($post_id, '_kundegalleri_watermark_setting', $setting);
+    $setting = isset($_POST['wstudio_watermark_setting']) && in_array($_POST['wstudio_watermark_setting'], $allowed)
+        ? $_POST['wstudio_watermark_setting'] : 'default';
+    update_post_meta($post_id, '_wstudio_watermark_setting', $setting);
 });
 
 // --- Kundeinformation
 add_action('add_meta_boxes', function() {
-    add_meta_box('kundegalleri_customer_meta_box', 'Kundeinformation', 'kundegalleri_customer_meta_box_callback', 'kundegalleri', 'normal', 'high');
+    add_meta_box('wstudio_customer_meta_box', 'Kundeinformation', 'wstudio_customer_meta_box_callback', 'kundegalleri', 'normal', 'high');
 });
 
-function kundegalleri_customer_meta_box_callback($post) {
+function wstudio_customer_meta_box_callback($post) {
     $fields = [
         'kunde_first_name' => 'Fornavn',
         'kunde_last_name'  => 'Efternavn',
@@ -133,10 +133,10 @@ function wg_accepted_time_metabox_callback($post) {
 
 // --- E-mail til kunde
 add_action('add_meta_boxes', function() {
-    add_meta_box('kundegalleri_send_email', 'Send e-mail til kunde', 'kundegalleri_send_email_metabox_callback', 'kundegalleri', 'side', 'default');
+    add_meta_box('wstudio_send_email', 'Send e-mail til kunde', 'wstudio_send_email_metabox_callback', 'kundegalleri', 'side', 'default');
 });
 
-function kundegalleri_send_email_metabox_callback($post) {
+function wstudio_send_email_metabox_callback($post) {
     $first_name = get_post_meta($post->ID, 'kunde_first_name', true);
     $email      = get_post_meta($post->ID, 'kunde_email', true);
     $password   = get_post_meta($post->ID, 'kunde_password', true);
@@ -160,7 +160,7 @@ function kundegalleri_send_email_metabox_callback($post) {
         echo '<p><strong>Sidst sendt:</strong> Ikke sendt endnu</p>';
     }
 
-    echo '<p><button type="button" class="button button-primary" onclick="sendKundeEmail(' . esc_attr($post->ID) . ')">Send e-mail</button></p>';
+    echo '<p><button type="button" class="button button-primary" onclick="sendWstudioEmail(' . esc_attr($post->ID) . ')">Send e-mail</button></p>';
     echo '<div id="email-response-' . esc_attr($post->ID) . '" style="margin-top:10px;"></div>';
     echo '</div>';
 }

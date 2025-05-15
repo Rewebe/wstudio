@@ -3,9 +3,9 @@
 
 if (!defined('ABSPATH')) exit;
 
-add_action('admin_post_opret_galleri', 'weigang_opret_galleri');
+add_action('admin_post_opret_galleri', 'wstudio_opret_galleri');
 
-function weigang_opret_galleri() {
+function wstudio_opret_galleri() {
     if (!current_user_can('edit_posts')) {
         wp_die('Ingen adgang.');
     }

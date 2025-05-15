@@ -12,19 +12,19 @@ if (!defined('ABSPATH')) exit;
  */
 
 // 1) Metabox: Vælg udløbsdato (date only)
-add_action('add_meta_boxes', 'wg_add_expiration_metabox');
-function wg_add_expiration_metabox() {
+add_action('add_meta_boxes', 'wstudio_add_expiration_metabox');
+function wstudio_add_expiration_metabox() {
     add_meta_box(
         'kundegalleri_expiration_meta_box',
         __('Udløbsdato', 'text-domain'),
-        'wg_expiration_metabox_callback',
+        'wstudio_expiration_metabox_callback',
         'kundegalleri',
         'side',
         'core'
     );
 }
 
-function wg_expiration_metabox_callback($post) {
+function wstudio_expiration_metabox_callback($post) {
     wp_nonce_field('wg_save_expiration_date', 'wg_expiration_nonce');
     $value = get_post_meta($post->ID, 'kundegalleri_expiration_date', true);
     // Gem kun datoen i inputfelt, intern tid sættes til 23:59 når gemt
@@ -39,8 +39,8 @@ function wg_expiration_metabox_callback($post) {
 }
 
 // 2) Gem expiration_date
-add_action('save_post', 'wg_save_expiration_date');
-function wg_save_expiration_date($post_id) {
+add_action('save_post', 'wstudio_save_expiration_date');
+function wstudio_save_expiration_date($post_id) {
     if (!isset($_POST['wg_expiration_nonce']) || !wp_verify_nonce($_POST['wg_expiration_nonce'], 'wg_save_expiration_date')) {
         return;
     }
@@ -58,17 +58,17 @@ function wg_save_expiration_date($post_id) {
 }
 
 // 3) Planlæg cron-job på init
-add_action('init', 'wg_schedule_expiration_cron');
-function wg_schedule_expiration_cron() {
-    if (!wp_next_scheduled('wg_check_expired_galleries_daily')) {
+add_action('init', 'wstudio_schedule_expiration_cron');
+function wstudio_schedule_expiration_cron() {
+    if (!wp_next_scheduled('wstudio_check_expired_galleries_daily')) {
         $timestamp = strtotime('tomorrow midnight', current_time('timestamp'));
-        wp_schedule_event($timestamp, 'daily', 'wg_check_expired_galleries_daily');
+        wp_schedule_event($timestamp, 'daily', 'wstudio_check_expired_galleries_daily');
     }
 }
 
 // 4) Cron callback: slet udløbne gallerier
-add_action('wg_check_expired_galleries_daily', 'wg_delete_expired_galleries');
-function wg_delete_expired_galleries() {
+add_action('wstudio_check_expired_galleries_daily', 'wstudio_delete_expired_galleries');
+function wstudio_delete_expired_galleries() {
     $today = current_time('Y-m-d H:i:s');
     $args  = [
         'post_type'      => 'kundegalleri',
@@ -90,24 +90,24 @@ function wg_delete_expired_galleries() {
             wp_delete_post($pid, true);
             $up  = wp_upload_dir();
             $dir = trailingslashit($up['basedir']) . "kundegalleri/{$pid}";
-            wg_rrmdir($dir);
+            wstudio_rrmdir($dir);
         }
     }
 }
 
 // 5) Helper: rekursiv mappe-sletning
-function wg_rrmdir($dir) {
+function wstudio_rrmdir($dir) {
     if (!is_dir($dir)) return;
     foreach (array_diff(scandir($dir), ['.', '..']) as $file) {
         $path = "{$dir}/{$file}";
-        is_dir($path) ? wg_rrmdir($path) : unlink($path);
+        is_dir($path) ? wstudio_rrmdir($path) : unlink($path);
     }
     rmdir($dir);
 }
 
 // 6) Frontend: vis expiration notice før galleri (kun dato)
-add_action('kundegalleri_before_gallery', 'wg_show_expiration_notice');
-function wg_show_expiration_notice($post_id) {
+add_action('kundegalleri_before_gallery', 'wstudio_show_expiration_notice');
+function wstudio_show_expiration_notice($post_id) {
     $expiration = get_post_meta($post_id, 'kundegalleri_expiration_date', true);
     if ($expiration && get_post_status($post_id) === 'publish') {
         $formatted = date_i18n('d-m-Y', strtotime($expiration));

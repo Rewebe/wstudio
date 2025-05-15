@@ -4,9 +4,9 @@
 if (!defined('ABSPATH')) exit;
 
 // --- SEND KUNDE E-MAIL VIA AJAX ---
-add_action('wp_ajax_send_customer_email', 'weigang_send_customer_email');
+add_action('wp_ajax_send_customer_email', 'wstudio_send_customer_email');
 
-function weigang_send_customer_email() {
+function wstudio_send_customer_email() {
     if (!current_user_can('edit_posts')) {
         wp_send_json_error('Ingen adgang.');
     }

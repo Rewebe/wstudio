@@ -6,10 +6,10 @@ if (!defined('ABSPATH')) exit;
 /**
  * AJAX: Download ZIP med billeder
  */
-add_action('wp_ajax_wg_download_zip', 'wg_download_zip_handler');
-add_action('wp_ajax_nopriv_wg_download_zip', 'wg_download_zip_handler');
+add_action('wp_ajax_wstudio_download_zip', 'wstudio_download_zip_handler');
+add_action('wp_ajax_nopriv_wstudio_download_zip', 'wstudio_download_zip_handler');
 
-function wg_download_zip_handler() {
+function wstudio_download_zip_handler() {
     $post_id = intval($_GET['gallery_id'] ?? 0);
     $type = sanitize_text_field($_GET['type'] ?? '');
     $uploads = wp_upload_dir();
