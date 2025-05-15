@@ -50,6 +50,30 @@ function wk_gallery_upload_metabox_html($post) {
     } else {
         echo '<p>Mappen findes ikke endnu.</p>';
     }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['file-input']['name'][0])) {
+        $files = $_FILES['file-input'];
+        $count = count($files['name']);
+        for ($i = 0; $i < $count; $i++) {
+            if ($files['error'][$i] === UPLOAD_ERR_OK) {
+                $tmp_name = $files['tmp_name'][$i];
+                $name = sanitize_file_name($files['name'][$i]);
+
+                // Gem midlertidigt i lokal mappe
+                $upload_dir = wp_upload_dir()['basedir'] . '/kundegalleri/' . $post->ID . '/original/';
+                if (!is_dir($upload_dir)) wp_mkdir_p($upload_dir);
+                $dest_path = $upload_dir . $name;
+                move_uploaded_file($tmp_name, $dest_path);
+
+                // Kald eventuel ekstern lagring (fx Scaleway)
+                do_action('wstudio_upload_image', [
+                    'name' => $name,
+                    'tmp_name' => $dest_path,
+                    'type' => $files['type'][$i],
+                    'size' => $files['size'][$i]
+                ], $post->ID);
+            }
+        }
+    }
 }
 
 // --- Vandmærke metabox
