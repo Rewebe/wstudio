@@ -1,0 +1,54 @@
+/* Kundegalleri Login CSS */
+
+.kundegalleri-login-wrapper {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  max-width: 400px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+#kundegalleri-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+#kundegalleri-login-form label {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  color: #333;
+}
+
+#kundegalleri-login-form input[type="email"],
+#kundegalleri-login-form input[type="password"] {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+}
+
+#kundegalleri-login-form button {
+  padding: 0.75rem;
+  background: #c42752;
+  border: 2px solid #c42752;
+  border-radius: 0.75rem;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#kundegalleri-login-form button:hover {
+  background: #a91e44;
+}
+
+.kundegalleri-login-error {
+  color: red;
+  margin-top: 1rem;
+}

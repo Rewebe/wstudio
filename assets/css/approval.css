@@ -1,0 +1,149 @@
+/* Infotekst over galleriet */
+.gallery-info-text {
+  max-width: 900px;
+  margin: 0 auto 1.5rem;
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.6;
+  text-align: center;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* Wrapper til alt (centerer max bredde) */
+.wg-approval-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Top kontroller (knap, dropdown, badge) */
+#wg-approval-dialog {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+/* Alle børn i dialog skal ikke vokse */
+#wg-approval-dialog > * {
+  flex: 0 0 auto;
+}
+
+/* Accepter-knap */
+#wg-approve-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #28a745;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* Hover */
+#wg-approve-btn:hover,
+#wg-approve-btn:focus {
+  background-color: #218838;
+}
+
+/* Når JS skjuler knappen, bevar pladsen */
+#wg-approve-btn[style*="display: none"],
+#wg-approve-btn[style*="visibility: hidden"] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Dropdown til zip download – modern style */
+.zip-download-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #28a745;
+  background-color: #fff;
+  color: #28a745;
+  min-width: 200px;
+  max-width: 260px;
+  width: auto !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' fill='none' stroke='%2328a745' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+.zip-download-select:hover {
+  border-color: #218838;
+}
+
+.zip-download-select:focus {
+  outline: none;
+  border-color: #1e7e34;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+}
+
+.zip-download-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-image: none;
+}
+
+/* Godkendt badge */
+#wg-approved-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #e6f9ee;
+  color: #2c662d;
+  padding: 0.5rem 1.25rem;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  min-width: 220px;
+}
+#wg-approved-badge .wg-time {
+  font-weight: bold;
+}
+
+/* Mobil tilpasning */
+@media (max-width: 768px) {
+  #wg-approval-dialog {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #wg-approval-dialog > * {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  #wg-approved-badge {
+    justify-content: center;
+  }
+}
+
+/* Topsektion layout */
+.gallery-top-controls {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Wrapper til venstre kolonne (knap eller badge) */
+.wg-approval-left {
+  display: inline-flex;
+  align-items: center;
+  min-width: 220px;
+  justify-content: flex-start;
+}
