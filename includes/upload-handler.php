@@ -25,7 +25,13 @@ function wstudio_ajax_upload() {
     }
 
     $storage_type = get_option('wstudio_storage_type', 'local');
-    if ($storage_type === 'scaleway') {
+    $settings = get_option('wstudio_storage_settings', []);
+    $access_key = $settings['access_key'] ?? '';
+    $secret_key = $settings['secret_key'] ?? '';
+    $bucket     = $settings['bucket'] ?? '';
+    $region     = $settings['region'] ?? '';
+
+    if ($storage_type === 'scaleway' && $access_key && $secret_key && $bucket && $region) {
         do_action('wstudio_upload_image', [
             'name' => $filename,
             'tmp_name' => $target_path,
@@ -33,6 +39,7 @@ function wstudio_ajax_upload() {
             'size' => $file['size']
         ], $post_id);
     } else {
+        error_log("[wstudio] Mangler Scaleway-konfiguration.");
         do_action('wstudio_upload_image', [
             'name' => $filename,
             'tmp_name' => $target_path,
