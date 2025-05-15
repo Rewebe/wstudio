@@ -29,11 +29,11 @@ jQuery(document).ready(function($) {
         var formData = new FormData();
         formData.append('file', file);
         formData.append('action', 'kundegalleri_ajax_upload');
-        formData.append('nonce', kundegalleri_vars.nonce);
-        formData.append('post_id', kundegalleri_vars.post_id);
+        formData.append('nonce', wstudio_vars.nonce);
+        formData.append('post_id', wstudio_vars.post_id);
 
         $.ajax({
-            url: kundegalleri_vars.ajax_url,
+            url: wstudio_vars.ajax_url,
             type: 'POST',
             data: formData,
             contentType: false,
@@ -61,12 +61,12 @@ jQuery(document).ready(function($) {
 
         if (confirm('Er du sikker på, at du vil slette dette billede?')) {
             $.ajax({
-                url: kundegalleri_vars.ajax_url,
+                url: wstudio_vars.ajax_url,
                 method: 'POST',
                 data: {
                     action: 'wk_delete_image',
-                    nonce: kundegalleri_vars.nonce,
-                    post_id: kundegalleri_vars.post_id,
+                    nonce: wstudio_vars.nonce,
+                    post_id: wstudio_vars.post_id,
                     file_name: fileName
                 },
                 success: function(response) {
