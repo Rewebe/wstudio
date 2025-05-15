@@ -24,13 +24,22 @@ function wstudio_ajax_upload() {
         wp_send_json_error(['message' => 'Kunne ikke flytte fil.']);
     }
 
-    // Trigger any external storage (e.g., Scaleway)
-    do_action('wstudio_upload_image', [
-        'name' => $filename,
-        'tmp_name' => $target_path,
-        'type' => $file['type'],
-        'size' => $file['size']
-    ], $post_id);
+    $storage_type = get_option('wstudio_storage_type', 'local');
+    if ($storage_type === 'scaleway') {
+        do_action('wstudio_upload_image', [
+            'name' => $filename,
+            'tmp_name' => $target_path,
+            'type' => $file['type'],
+            'size' => $file['size']
+        ], $post_id);
+    } else {
+        do_action('wstudio_upload_image', [
+            'name' => $filename,
+            'tmp_name' => $target_path,
+            'type' => $file['type'],
+            'size' => $file['size']
+        ], $post_id);
+    }
 
     if (file_exists($target_path)) {
         unlink($target_path);
