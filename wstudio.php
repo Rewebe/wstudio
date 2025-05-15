@@ -21,6 +21,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/expiration.php';
 require_once plugin_dir_path(__FILE__) . 'includes/opret-galleri.php';
 require_once plugin_dir_path(__FILE__) . 'includes/send-email.php';
 require_once plugin_dir_path(__FILE__) . 'includes/upload-handler.php';
+require_once plugin_dir_path(__FILE__) . 'includes/local-handler.php';
 
 // Opret .htaccess ved aktivering
 register_activation_hook(__FILE__, function() {

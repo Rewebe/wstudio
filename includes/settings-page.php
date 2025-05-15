@@ -21,6 +21,7 @@ add_action('admin_init', function () {
     register_setting('wstudio_settings_group', 'wstudio_resize_quality');
     register_setting('wstudio_settings_group', 'wstudio_watermark_enabled', ['sanitize_callback' => fn($v) => $v ? 'yes' : 'no']);
     register_setting('wstudio_settings_group', 'wstudio_use_name_in_slug');
+    // register_setting('wstudio_settings_group', 'wstudio_storage_type');
 });
 
 function wstudio_settings_page() {
@@ -36,6 +37,7 @@ function wstudio_settings_page() {
 <?php settings_fields('wstudio_settings_group'); ?>
 
 <h2>Vandmærke</h2>
+
 <table class="form-table">
 <tr><th>Tekst</th><td><input type="text" name="wstudio_watermark_text" value="<?php echo esc_attr(get_option('wstudio_watermark_text')); ?>" style="width:300px;"></td></tr>
 <tr><th>Gennemsigtighed (tekst)</th><td><input type="number" name="wstudio_watermark_opacity_text" value="<?php echo esc_attr(get_option('wstudio_watermark_opacity_text', 30)); ?>" min="1" max="100"></td></tr>
