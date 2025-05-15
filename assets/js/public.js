@@ -28,7 +28,7 @@ jQuery(document).ready(function($) {
     function uploadFile(file) {
         var formData = new FormData();
         formData.append('file', file);
-        formData.append('action', 'kundegalleri_ajax_upload');
+        formData.append('action', 'wstudio_ajax_upload');
         formData.append('nonce', wstudio_vars.nonce);
         formData.append('post_id', wstudio_vars.post_id);
 
