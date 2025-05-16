@@ -4,6 +4,8 @@ if (!defined('ABSPATH')) exit;
 add_action('wstudio_upload_image', function($file, $post_id) {
     error_log('[wstudio] Lokal upload aktiv.');
 
+    require_once plugin_dir_path(__FILE__) . 'image-processing.php';
+
     $filename = basename($file['name']);
     $tmp_path = $file['tmp_name'];
 

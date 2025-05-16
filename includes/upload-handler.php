@@ -24,6 +24,8 @@ function wstudio_ajax_upload() {
         wp_send_json_error(['message' => 'Kunne ikke flytte fil.']);
     }
 
+    require_once plugin_dir_path(__FILE__) . 'image-processing.php';
+
     $storage_type = get_option('wstudio_storage_type', 'local');
     $settings = get_option('wstudio_storage_settings', []);
     $access_key = $settings['access_key'] ?? '';
