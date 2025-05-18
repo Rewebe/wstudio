@@ -33,20 +33,26 @@ function wstudio_ajax_upload() {
     $bucket     = $settings['bucket'] ?? '';
     $region     = $settings['region'] ?? '';
 
+    $versions = wstudio_generate_image_versions($target_path, $filename, $post_id);
+    if (!is_array($versions) || empty($versions['paths'])) {
+        error_log("[wstudio] ❌ Billedkomprimering fejlede.");
+        wp_send_json_error(['message' => 'Billedbehandling fejlede.']);
+    }
+
     if ($storage_type === 'scaleway' && $access_key && $secret_key && $bucket && $region) {
         do_action('wstudio_upload_image', [
             'name' => $filename,
-            'tmp_name' => $target_path,
+            'tmp_name' => $versions['paths'],
             'type' => $file['type'],
-            'size' => $file['size']
+            'size' => $versions['sizes']
         ], $post_id);
     } else {
         error_log("[wstudio] Mangler Scaleway-konfiguration.");
         do_action('wstudio_upload_image', [
             'name' => $filename,
-            'tmp_name' => $target_path,
+            'tmp_name' => $versions['paths'],
             'type' => $file['type'],
-            'size' => $file['size']
+            'size' => $versions['sizes']
         ], $post_id);
     }
 
