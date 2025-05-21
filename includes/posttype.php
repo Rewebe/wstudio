@@ -1,5 +1,3 @@
-
-
 <?php
 // Register Custom Post Type: wstudio
 function wstudio_register_post_type() {
@@ -24,7 +22,7 @@ function wstudio_register_post_type() {
         'public'             => false,
         'publicly_queryable' => false,
         'show_ui'            => true,
-        'show_in_menu'       => true,
+        'show_in_menu'       => 'edit.php?post_type=wstudio_gallery',
         'query_var'          => false,
         'rewrite'            => false,
         'capability_type'    => 'post',
@@ -35,7 +33,7 @@ function wstudio_register_post_type() {
         'supports'           => ['title'],
     ];
 
-    register_post_type('wstudio', $args);
+    register_post_type('wstudio_gallery', $args);
 }
 
 add_action('init', 'wstudio_register_post_type');

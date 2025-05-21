@@ -1,0 +1,8 @@
+{
+  "name": "weigang/wupload",
+  "description": "Upload-plugin med Scaleway og billedkomprimering",
+  "type": "project",
+  "require": {
+    "aws/aws-sdk-php": "^3.300"
+  }
+}
