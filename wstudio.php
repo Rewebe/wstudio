@@ -7,5 +7,5 @@
 */
 
 require_once plugin_dir_path(__FILE__) . 'includes/posttype.php';
-require_once plugin_dir_path(__FILE__) . 'includes/admin-upload.php';
 require_once plugin_dir_path(__FILE__) . 'includes/admin-upload-handler.php';
+require_once plugin_dir_path(__FILE__) . 'includes/admin-metaboxes.php';
